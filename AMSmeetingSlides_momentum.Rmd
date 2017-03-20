@@ -1,0 +1,122 @@
+---
+title: "Asset Mix Strategy"
+author: "Quant Team"
+date: "Feb 21, 2017"
+output:
+  ioslides_presentation:
+    css: vestcor_style.css
+    logo: vestcor_logo.png
+    toc: yes
+  beamer_presentation: default
+---
+# Momentum Model Update
+
+## Summary
+
+Current Posn: 20bps Canada, 20bps U.S., 20bps EAFE, 10bps EM, 0bps REITs
+
+-  Canada above both 100D & 200D SMA (Full Position Implied)
+-  U.S. above both 100D & 200D SMA (Full Position Implied)
+-  EAFE above both 100D & 200D SMA (Full Position Implied)
+-  EM above both (Full Position Implied)
+-  U.S. REITs is above 100D SMA and it is slightly higher than 200D SMA (Full Position Implied)
+
+
+## S&P 500 {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+library(Rbbg,quietly=TRUE)
+library(xts,quietly=TRUE)
+con = blpConnect(verbose = FALSE)
+analysis.date = Sys.Date()
+start.date = as.Date("1998-12-31")
+symbols = c("SPX Index")
+hist = bdh(con,symbols,"px_last",start.date,analysis.date)
+hist.xts = xts(hist[,2],order.by=as.Date(hist[,1]))
+hist.xts = na.locf(hist.xts)
+hist.xts = na.locf(hist.xts,fromLast=TRUE)
+spx = hist.xts[,1]
+colnames(spx) = "Close"
+chart_Series(spx,TA='add_SMA(200);add_SMA(100,col="blue")',name="S&P 500 Index")
+blpDisconnect(con)
+```
+
+## TSX Composite {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+library(Rbbg,quietly=TRUE)
+library(xts,quietly=TRUE)
+con = blpConnect(verbose = FALSE)
+analysis.date = Sys.Date()
+start.date = as.Date("1998-12-31")
+symbols = c("SPTSX Index")
+hist = bdh(con,symbols,"px_last",start.date,analysis.date)
+hist.xts = xts(hist[,2],order.by=as.Date(hist[,1]))
+hist.xts = na.locf(hist.xts)
+hist.xts = na.locf(hist.xts,fromLast=TRUE)
+spx = hist.xts[,1]
+colnames(spx) = "Close"
+chart_Series(spx,TA='add_SMA(200);add_SMA(100,col="blue")',name="TSX Composite Index")
+```
+
+
+## MSCI EAFE {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+library(Rbbg,quietly=TRUE)
+library(xts,quietly=TRUE)
+con = blpConnect(verbose = FALSE)
+analysis.date = Sys.Date()
+start.date = as.Date("1998-12-31")
+symbols = c("MXEA Index")
+hist = bdh(con,symbols,"px_last",start.date,analysis.date)
+hist.xts = xts(hist[,2],order.by=as.Date(hist[,1]))
+hist.xts = na.locf(hist.xts)
+hist.xts = na.locf(hist.xts,fromLast=TRUE)
+spx = hist.xts[,1]
+colnames(spx) = "Close"
+chart_Series(spx,TA='add_SMA(200);add_SMA(100,col="blue")',name="MSCI EAFE Index")
+```
+
+
+## MSCI Emerging Markets {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+library(Rbbg,quietly=TRUE)
+library(xts,quietly=TRUE)
+con = blpConnect(verbose = FALSE)
+analysis.date = Sys.Date()
+start.date = as.Date("1998-12-31")
+symbols = c("MXEF Index")
+hist = bdh(con,symbols,"px_last",start.date,analysis.date)
+hist.xts = xts(hist[,2],order.by=as.Date(hist[,1]))
+hist.xts = na.locf(hist.xts)
+hist.xts = na.locf(hist.xts,fromLast=TRUE)
+spx = hist.xts[,1]
+colnames(spx) = "Close"
+chart_Series(spx,TA='add_SMA(200);add_SMA(100,col="blue")',name="MSCI EM Index")
+```
+
+## US Equity REITs {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+library(Rbbg,quietly=TRUE)
+library(xts,quietly=TRUE)
+con = blpConnect(verbose = FALSE)
+analysis.date = Sys.Date()
+start.date = as.Date("1998-12-31")
+symbols = c("FNER Index")
+hist = bdh(con,symbols,"px_last",start.date,analysis.date)
+hist.xts = xts(hist[,2],order.by=as.Date(hist[,1]))
+hist.xts = na.locf(hist.xts)
+hist.xts = na.locf(hist.xts,fromLast=TRUE)
+spx = hist.xts[,1]
+colnames(spx) = "Close"
+chart_Series(spx,TA='add_SMA(200);add_SMA(100,col="blue")',name="FTSE US Equity REIT Index")
+```
+

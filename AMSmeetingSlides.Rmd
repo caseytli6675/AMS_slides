@@ -1,0 +1,225 @@
+---
+title: "Asset Mix Strategy"
+author: "Quant Team"
+date: "Feb 21, 2017"
+output:
+  ioslides_presentation:
+    css: vestcor_style.css
+    logo: vestcor_logo.png
+    toc: yes
+  beamer_presentation: default
+---
+## Presentation Map
+
+- Regional equity valuation update (slides 4 - 11, 30 - 43)
+- Risk update (slides 13 - 20)
+- Economic indicators (slides 22 - 28)
+
+# Equity Index Descriptors
+
+## Summary
+- Compare with the data in Auguest, momentum has moved up to upper quartile from lower quartile for all regions
+- North America slightly expensive on a trailing earnings basis; all regions expensive on a forward earnings basis
+- Some cheapness implied by both P/B ratios and Dividend Yields
+- While ROE remained depressed, the LT expected growth rates have increased in all regions
+
+See "Details" section for country by country breakdown.
+
+## Regional PE Ratio {#myStyle}
+
+![](allCountry/MSCI_PX_EARN_country4.png)
+
+## Regional Forward PE Ratio {#myStyle}
+
+![](allCountry/MSCI_P_12M_FWD_EARN_country4.png)
+
+## Regional Price to Book {#myStyle}
+
+![](allCountry/MSCI_PX_BV_country4.png)
+
+## Regional Dividend Yield {#myStyle}
+
+![](allCountry/MSCI_DVD_YLD_country4.png)
+
+## Regional ROE {#myStyle}
+
+![](allCountry/MSCI_ROE_country4.png)
+
+## Regional Momentum {#myStyle}
+
+![](allCountry/PX_LAST_country4.png)
+
+## Regional EPS Growth (5 Year Exp)
+
+![](allCountry/MSCI_LT_FWD_EPS_G_RATE_country4.png)
+
+# Risk Information
+## Summary
+- Short term risk continues moving below long term risk 
+- On the average, volatility of EM is 32% higher than DM in long term, 23% higher in midterm and 23% higher in short term
+
+## Short/Long Term Risk Forecasts (Barra)
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(xts,verbose = FALSE)
+my.data = read.csv("S:/Quantitative Investing & Applied Research/risk_sprd.csv",header=T,as.is=T)
+my.data.xts = xts(my.data[,-1],order.by=as.Date(my.data[,1],format="%m/%d/%Y"))
+plot.zoo(my.data.xts,plot.type='single',col=c("red","blue"),ylab="Annualized U.S. Equity Volatility Forecast",xlab="",main="")
+legend('topleft',legend=c("Short Term","Long Term"),col=c("red","blue"),lty=1)
+```
+
+## Equity Volatility - Short Term - DM
+
+![](risk/strisk.png)
+
+## Equity Volatility - Medium Term - DM
+
+![](risk/mtrisk.png)
+
+## Equity Volatility - Long Term - DM
+
+![](risk/ltrisk.png)
+
+## Equity Volatility - Short Term - EM
+
+![](risk/strisk_em.png)
+
+## Equity Volatility - Medium Term - EM
+
+![](risk/mtrisk_em.png)
+
+## Equity Volatility - Long Term - EM
+
+![](risk/ltrisk_em.png)
+
+# Selected Economic Indicators
+
+
+## Summary
+
+- No major changes in most indicators
+- The declining trend of High Yield spreads continues since August 
+- The 10-2 spread started to increase since August
+
+## St. Louis Fed Financial Stress Index
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+invisible(getSymbols('STLFSI',src="FRED"))
+plot(STLFSI['1997/'],main="St. Louis Fed Financial Stress Index")
+```
+
+## Excess Reserves {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+invisible(getSymbols('WRESBAL',src='FRED'))
+plot(WRESBAL['1997/'],main="Reserve Balances with Federal Reserve Banks",
+     ylab="$ Billions")
+```
+
+## NYSE Margin Debt {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(Rbbg,quietly=TRUE)
+library(xts,quietly=TRUE)
+con=blpConnect(verbose = FALSE)
+analysis.date = Sys.Date()
+start.date = as.Date("1984-12-31")
+spx = bdh(con,"SPX index","px_last",start.date,analysis.date)
+spx.xts = xts(spx[,2],order.by=as.Date(spx[,1]))
+spx.xts = apply.monthly(spx.xts,tail,1)
+spx1 = spx.xts['1984-12-31/2016-12-31',1]   # use the lasest date of md
+md = bdh(con,"MARGDEBT Index","px_last",start.date,analysis.date)
+md1 = md[,2]
+md.xts = xts(md[,2],order.by=as.Date(md[,1]))  
+dat = merge(spx1,md1)
+dat$deflated.debt = dat[,2]/dat[,1]
+par(mfrow=c(1,1))
+#plot(dat[,2],main="",ylab="Margin Debt")
+plot(dat[,3],main="",ylab="Margin Debt, Deflated by SPX")
+par(mfrow=c(1,1))
+```
+
+## BAML US High Yield Master II OAS {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+invisible(getSymbols('BAMLH0A0HYM2',src='FRED'))
+plot(BAMLH0A0HYM2['1997/'],main="BAML US High Yield Master II OAS",ylab="Pct")
+```
+
+## 10-2 Yield Spread {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+invisible(getSymbols('T10Y2Y',src='FRED'))
+plot(T10Y2Y['1997/'],main="10 Year Minus 2 Year Constant Maturity Treasury Yield Spread")
+```
+
+## 5Y5Y Breakeven (U.S) {#myStyle}
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(quantmod,quietly = TRUE)
+invisible(getSymbols('T5YIFR',src='FRED'))
+plot(T5YIFR[],main="5 Year, 5 Year Forward Inflation Breakeven",ylim=c(0,3))
+```
+
+# Country by Country Equity Market Descriptors
+
+## DM Country Trailing Price Earnings {#myStyle}
+
+![](allCountry/MSCI_PX_EARN.png)
+
+## DM Country Forward Price Earnings {#myStyle}
+
+![](allCountry/MSCI_P_12M_FWD_EARN.png)
+
+## DM Country Price to Book {#myStyle}
+
+![](allCountry/MSCI_PX_BV.png)
+
+## DM Country Dividend Yield {#myStyle}
+
+![](allCountry/MSCI_DVD_YLD.png)
+
+## DM Country ROE {#myStyle}
+
+![](allCountry/MSCI_ROE.png)
+
+## DM Country Momentum {#myStyle}
+
+![](allCountry/PX_LAST.png)
+
+## DM Country EPS Growth (5 Year Exp)
+
+![](allCountry/MSCI_LT_FWD_EPS_G_RATE.png)
+
+
+## EM Country Trailing Price Earnings {#myStyle}
+
+![](allCountry/MSCI_PX_EARN_countryEM.png)
+
+## EM Country Forward Price Earnings {#myStyle}
+
+![](allCountry/MSCI_P_12M_FWD_EARN_countryEM.png)
+
+## EM Country Price to Book {#myStyle}
+
+![](allCountry/MSCI_PX_BV_countryEM.png)
+
+## EM Country Dividend Yield {#myStyle}
+
+![](allCountry/MSCI_DVD_YLD_countryEM.png)
+
+## EM Country ROE {#myStyle}
+
+![](allCountry/MSCI_ROE_countryEM.png)
+
+## EM Country Momentum {#myStyle}
+
+![](allCountry/PX_LAST_countryEM.png)
+
+## EM Country EPS Growth (5 Year Exp)
+
+![](allCountry/MSCI_LT_FWD_EPS_G_RATE_countryEM.png)
